@@ -1,0 +1,5 @@
+# Servicio común: 0000fff0-0000-1000-8000-00805f9b34fb
+# Característica de escritura: 0000fff3-0000-1000-8000-00805f9b34fb
+
+WRITE_UUID = "0000fff3-0000-1000-8000-00805f9b34fb"
+MAC_ADDRESS = "BE:32:01:B6:64:71"
