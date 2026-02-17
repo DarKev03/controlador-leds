@@ -18,7 +18,13 @@ A web-based and voice-controlled interface for ELK-BLEDOM Bluetooth LED strips. 
 1. **Requirements**: Python 3.9+ and Bluetooth-enabled PC.
 2. **Install dependencies**: `pip install -r requirements.txt`
 3. **Configure**: Update `MAC_ADDRESS` in `backend/constants.py`.
-4. **Run**: Execute `python backend/app.py` and open `http://localhost:5000`.
+4. **Run**: Execute `python backend/app.pyw` or use the provided scripts.
+
+### 🤫 Silent Startup (Windows)
+For a 100% invisible background execution:
+1. Create a shortcut of `silencioso.vbs`.
+2. Press `Win + R`, type `shell:startup`, and paste the shortcut there.
+3. The controller will now start silently with Windows.
 
 ### 📱 iOS Shortcuts
 Create a "Get Contents of URL" shortcut pointing to:
@@ -40,7 +46,13 @@ Create a "Get Contents of URL" shortcut pointing to:
 1. **Requisitos**: Python 3.9+ y PC con Bluetooth.
 2. **Instalar dependencias**: `pip install -r requirements.txt`
 3. **Configurar**: Edita `MAC_ADDRESS` en `backend/constants.py`.
-4. **Ejecutar**: Lanza `python backend/app.py` y entra en `http://localhost:5000`.
+4. **Ejecutar**: Lanza `python backend/app.pyw` o usa los scripts incluidos.
+
+### 🤫 Inicio Silencioso (Windows)
+Para una ejecución 100% invisible:
+1. Crea un acceso directo de `silencioso.vbs`.
+2. Pulsa `Win + R`, escribe `shell:startup` y pega allí el acceso directo.
+3. El controlador arrancará junto con Windows de forma totalmente oculta.
 
 ### 📱 Atajos de iOS
 Crea un atajo de "Obtener contenido de URL" hacia:
