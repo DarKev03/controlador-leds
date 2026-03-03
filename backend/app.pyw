@@ -4,11 +4,17 @@ import asyncio
 from led_controller import LEDController
 
 import os
+import threading
+import win32gui
+import win32con
+import win32api
 
 app = Flask(__name__, 
             static_folder='../frontend/dist', 
             static_url_path='/')
 CORS(app)
+
+import constants
 
 @app.route('/')
 def serve_index():
@@ -101,8 +107,44 @@ def mobile_cold():
     success = run_async(execute_mobile_command(controller.set_color(0, 255, 255)))
     return jsonify({"success": success})
 
-if __name__ == '__main__':
-    print("Iniciando servidor en http://localhost:5000")
+def shutdown_handler_window():
+    """Create a hidden window to listen for session end messages."""
+    def on_session_end(hwnd, msg, wparam, lparam):
+        if msg == win32con.WM_QUERYENDSESSION or msg == win32con.WM_ENDSESSION:
+            print(">>> SHUTDOWN DETECTED. Sending OFF command to LEDs...", flush=True)
+            try:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(controller.connect(constants.MAC_ADDRESS))
+                loop.run_until_complete(controller.set_power(False))
+                loop.run_until_complete(controller.disconnect())
+                print(">>> LEDs turned off successfully during shutdown.", flush=True)
+            except Exception as e:
+                print(f">>> Failed to turn off LEDs during shutdown: {e}", flush=True)
+            return True
+        return win32gui.DefWindowProc(hwnd, msg, wparam, lparam)
+
+    wc = win32gui.WNDCLASS()
+    wc.lpfnWndProc = on_session_end
+    wc.lpszClassName = "LEDControllerShutdownListener"
+    wc.hInstance = win32api.GetModuleHandle(None)
+    
+    try:
+        class_atom = win32gui.RegisterClass(wc)
+        hwnd = win32gui.CreateWindow(
+            class_atom, "Shutdown Listener", 0, 0, 0, 0, 0, 0, 0, wc.hInstance, None
+        )
+        print(">>> Shutdown listener window created", flush=True)
+        win32gui.PumpMessages()
+    except Exception as e:
+        print(f">>> Error in shutdown handler window: {e}", flush=True)
+
+if __name__ == '__main__':    
+    
+    # Iniciar el hilo de escucha de apagado
+    shutdown_thread = threading.Thread(target=shutdown_handler_window, daemon=True)
+    shutdown_thread.start()
+
     # Intentamos conexión inicial silenciosa
     try:
         run_async(execute_mobile_command(asyncio.sleep(0)))
